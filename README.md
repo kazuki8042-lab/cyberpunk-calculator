@@ -11,4 +11,9 @@
 
 ![Cyberpunk Calculator Screenshot](./Cyberpunk%20Calculator.png)
 
-https://kazuki8042-lab.github.io/cyberpunk-calculator/
+
+<p align="center">
+  <a href="https://kazuki8042-lab.github.io/cyberpunk-calculator/" target="_blank">
+    🚀 アプリを起動する
+  </a>
+</p>
