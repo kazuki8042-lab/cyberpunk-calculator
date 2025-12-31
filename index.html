@@ -178,6 +178,29 @@
       letter-spacing: 0.02em;
       word-break: break-all;
     }
+    .note-field{
+      width: 100%;
+      min-height: 52px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(0,245,255,0.16);
+      background: rgba(5,8,20,0.55);
+      color: rgba(232,240,255,0.9);
+      font-size: 0.95rem;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      resize: none;
+      outline: none;
+      box-shadow: 0 0 0 1px rgba(0,245,255,0.06) inset;
+    }
+    .note-field::placeholder{
+      color: rgba(232,240,255,0.38);
+    }
+    .note-field:focus{
+      border-color: rgba(0,245,255,0.32);
+      box-shadow:
+        0 0 0 1px rgba(0,245,255,0.12) inset,
+        0 0 18px rgba(0,245,255,0.10);
+    }
     .value{
       /* 結果を少し上に持ち上げて、下のキーエリアに余裕を作る */
       margin-top: 10px;
@@ -359,6 +382,7 @@
 
       <section class="display" aria-label="表示エリア">
         <div class="expression" id="expressionLine" aria-label="式表示"></div>
+        <textarea class="note-field" id="noteInput" rows="2" placeholder="メモ（自由記述）" aria-label="メモ入力"></textarea>
         <div class="value" id="valueLine" aria-label="結果表示">0</div>
       </section>
 
@@ -447,7 +471,8 @@
       history: [], // max 5
       lastResult: null, // "="後の結果（文字列）
       justEvaluated: false,
-      error: false
+      error: false,
+      note: ""
     };
 
     // ----- Elements -----
@@ -456,6 +481,7 @@
     const elVal = document.getElementById("valueLine");
     const elKeys = document.getElementById("keys");
     const elDisplay = document.querySelector(".display");
+    const elNote = document.getElementById("noteInput");
 
     // ----- Utils -----
     function isOperator(ch) {
@@ -678,6 +704,7 @@
       state.expression = "";
       state.error = false;
       state.justEvaluated = false;
+      state.note = "";
       // 履歴は消さない（仕様）
       render();
     }
@@ -759,11 +786,14 @@
       state.error = false;
 
       // 履歴 push（最大5件・最新が一番下）
+      const noteText = state.note.trim();
+      const noteSuffix = noteText ? ` (${noteText})` : "";
       const historyLine = (pendingHistory && state.expression.trim() === "")
-        ? `${pendingHistory} = ${out}`
-        : (fullExpression.replace(/\s+/g, " ") + " = " + out);
+        ? `${pendingHistory} = ${out}${noteSuffix}`
+        : (fullExpression.replace(/\s+/g, " ") + " = " + out + noteSuffix);
       state.history.push(historyLine);
       if (state.history.length > 5) state.history.shift();
+      state.note = "";
 
       flashDisplay("flash-eq");
 
@@ -809,6 +839,16 @@
         elVal.textContent = shown;
         elVal.classList.remove("error");
       }
+
+      if (elNote && document.activeElement !== elNote) {
+        elNote.value = state.note;
+      }
+    }
+
+    if (elNote) {
+      elNote.addEventListener("input", () => {
+        state.note = elNote.value;
+      });
     }
 
     // ----- Events -----
