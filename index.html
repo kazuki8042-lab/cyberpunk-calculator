@@ -114,13 +114,69 @@
       z-index:1;
     }
     .history li{
+      display:flex;
+      align-items:center;
+      gap: 8px;
+      color: rgba(232,240,255,0.78);
+    }
+    .history li .text{
       white-space:nowrap;
       overflow:hidden;
       text-overflow:ellipsis;
-      color: rgba(232,240,255,0.78);
+      flex: 1;
     }
     .history li.empty{
       color: rgba(232,240,255,0.18);
+    }
+    .history li.empty .trash-btn{
+      opacity: 0;
+      pointer-events: none;
+    }
+    .history .trash-btn{
+      appearance:none;
+      border: 1px solid rgba(255,43,214,0.18);
+      background: rgba(255,43,214,0.08);
+      color: rgba(255,43,214,0.9);
+      width: 22px;
+      height: 22px;
+      border-radius: 6px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      cursor:pointer;
+      flex: 0 0 auto;
+      z-index:1;
+    }
+    .history .trash-btn svg{
+      width: 12px;
+      height: 12px;
+      fill: currentColor;
+    }
+    .history .trash-btn:active{
+      transform: scale(0.96);
+    }
+    .history .clear-btn{
+      position:absolute;
+      right: 10px;
+      bottom: 8px;
+      appearance:none;
+      border: 1px solid rgba(122,44,255,0.28);
+      background: rgba(122,44,255,0.12);
+      color: rgba(232,240,255,0.9);
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      cursor:pointer;
+      z-index:2;
+      box-shadow: 0 0 12px rgba(122,44,255,0.12);
+    }
+    .history .clear-btn svg{
+      width: 16px;
+      height: 16px;
+      fill: currentColor;
     }
 
     /* ディスプレイ */
@@ -378,6 +434,11 @@
     <main>
       <section class="history" aria-label="計算履歴（直近5件）">
         <ol id="historyList"></ol>
+        <button class="clear-btn" id="clearHistory" aria-label="履歴をすべて削除">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M7 4h10l1 3h3v2H3V7h3l1-3zm1.5 6h2v7h-2v-7zm5 0h2v7h-2v-7zM6 10h2v7H6v-7zm4-6h4l.5 2h-5L10 4z"/>
+          </svg>
+        </button>
       </section>
 
       <section class="display" aria-label="表示エリア">
@@ -482,6 +543,7 @@
     const elKeys = document.getElementById("keys");
     const elDisplay = document.querySelector(".display");
     const elNote = document.getElementById("noteInput");
+    const elClearHistory = document.getElementById("clearHistory");
 
     // ----- Utils -----
     function isOperator(ch) {
@@ -804,19 +866,27 @@
     function render() {
       // 履歴（5行固定：古→新。最新は一番下）
       const lines = state.history.slice(-5);
-      const padded = Array(Math.max(0, 5 - lines.length)).fill("").concat(lines);
+      const padCount = Math.max(0, 5 - lines.length);
+      const padded = Array(padCount).fill(null).concat(lines);
+      const startIndex = state.history.length - lines.length;
 
       elHistory.innerHTML = "";
-      for (const line of padded) {
+      padded.forEach((line, i) => {
         const li = document.createElement("li");
         if (!line) {
           li.className = "empty";
-          li.innerHTML = "&nbsp;";
+          li.innerHTML = `<button class="trash-btn" aria-hidden="true" tabindex="-1">
+            <svg viewBox="0 0 24 24"><path d="M7 6h10l-1 14H8L7 6zm3-3h4l1 2H9l1-2zm-5 2h14v2H5V5z"/></svg>
+          </button><span class="text">&nbsp;</span>`;
         } else {
-          li.textContent = line;
+          const actualIndex = startIndex + (i - padCount);
+          li.innerHTML = `<button class="trash-btn" data-index="${actualIndex}" aria-label="履歴を削除">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 6h10l-1 14H8L7 6zm3-3h4l1 2H9l1-2zm-5 2h14v2H5V5z"/></svg>
+          </button><span class="text"></span>`;
+          li.querySelector(".text").textContent = line;
         }
         elHistory.appendChild(li);
-      }
+      });
 
       // 上段：式（今作ってる途中の expression + currentInput を“それっぽく”表示）
       const exprPreview = (() => {
@@ -843,6 +913,22 @@
       if (elNote && document.activeElement !== elNote) {
         elNote.value = state.note;
       }
+    }
+
+    elHistory.addEventListener("click", (e) => {
+      const btn = e.target.closest(".trash-btn");
+      if (!btn || !btn.dataset.index) return;
+      const idx = Number(btn.dataset.index);
+      if (!Number.isFinite(idx)) return;
+      state.history.splice(idx, 1);
+      render();
+    });
+
+    if (elClearHistory) {
+      elClearHistory.addEventListener("click", () => {
+        state.history = [];
+        render();
+      });
     }
 
     if (elNote) {
