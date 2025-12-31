@@ -60,15 +60,11 @@
       color: var(--text);
       font-weight: 700;
       letter-spacing: 0.02em;
-      font-size: 0.95rem;
+      font-size: 1.2rem;
+      font-family: "Orbitron", "Oxanium", "Rajdhani", "SF Pro Display", "Segoe UI", sans-serif;
       display:flex;
       align-items:baseline;
       gap:.6rem;
-    }
-    header .badge{
-      font-size: .72rem;
-      color: rgba(0,245,255,0.95);
-      text-shadow: 0 0 12px rgba(0,245,255,0.35);
     }
 
     main{
@@ -203,7 +199,7 @@
       margin-top: auto;
       /* キーの下端が白く欠けるのを防ぐ（セーフエリア＋余白） */
       padding-bottom: calc(12px + env(safe-area-inset-bottom));
-      background: rgba(11,11,26,0.45);
+      background: rgba(11,11,26,0.82);
       border: 1px solid rgba(122,44,255,0.18);
       border-radius: calc(var(--radius) + 8px);
       padding: 14px;
@@ -353,9 +349,7 @@
     <header>
       <div class="title">
         <span>Neon 55 Calculator</span>
-        <span class="badge">×0.55 quick</span>
       </div>
-      <div>ボタンだけで完結。履歴は直近5件（最新が一番下）。</div>
     </header>
 
     <main>
