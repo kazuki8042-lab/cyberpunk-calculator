@@ -24,8 +24,8 @@
       --muted:rgba(232,240,255,0.65);
 
       /* 見た目は小さめ、でもタップ領域は確保 */
-      --btn-visual-size: clamp(28px, 8vw, 42px);
-      --btn-tap-size: 44px;
+      --btn-visual-size: clamp(52px, 12vw, 74px);
+      --btn-tap-size: clamp(56px, 14vw, 82px);
       --radius: 18px;
     }
 
@@ -47,8 +47,8 @@
       display:flex;
       flex-direction:column;
       /* 下が欠けやすい環境向けに“余裕”を追加 */
-      padding: 14px 14px max(24px, calc(env(safe-area-inset-bottom) + 24px));
-      gap: 10px;
+      padding: 16px 16px max(24px, calc(env(safe-area-inset-bottom) + 24px));
+      gap: 12px;
     }
 
     header, footer{
@@ -75,7 +75,7 @@
       /* app自体が100dvhなので、ここで100dvhを重ねると下が押し出されやすい */
       display:flex;
       flex-direction:column;
-      gap: 10px;
+      gap: 12px;
       flex: 1;
     }
 
@@ -132,7 +132,7 @@
       background: rgba(11,11,26,0.8);
       border: 1px solid rgba(255,43,214,0.20);
       border-radius: calc(var(--radius) + 4px);
-      padding: 12px 14px;
+      padding: 12px 16px;
       box-shadow:
         0 0 0 1px rgba(0,245,255,0.10) inset,
         0 0 28px rgba(122,44,255,0.12),
@@ -142,7 +142,7 @@
 
       /* レイアウトを安定させつつ、キー入力エリアを優先してスペースを譲る */
       flex: 0 0 auto;
-      min-height: 140px;
+      min-height: 120px;
       display: flex;
       flex-direction: column;
       gap: 6px;
@@ -206,7 +206,7 @@
       background: rgba(11,11,26,0.45);
       border: 1px solid rgba(122,44,255,0.18);
       border-radius: calc(var(--radius) + 8px);
-      padding: 12px;
+      padding: 14px;
       box-shadow:
         0 0 0 1px rgba(0,245,255,0.08) inset,
         0 0 28px rgba(0,245,255,0.07);
@@ -214,8 +214,9 @@
     .grid{
       display:grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 10px;
+      gap: 12px;
       align-items:stretch;
+      grid-auto-rows: var(--btn-tap-size);
     }
 
     button.key{
@@ -224,7 +225,7 @@
       background: transparent;
       padding: 0;
       margin:0;
-      min-height: var(--btn-tap-size);
+      height: var(--btn-tap-size);
       min-width: var(--btn-tap-size);
       border-radius: 16px;
       position:relative;
@@ -244,6 +245,7 @@
       align-items:center;
       justify-content:center;
       font-weight: 800;
+      font-size: clamp(1.15rem, 4.2vw, 1.6rem);
       letter-spacing: 0.02em;
       user-select:none;
 
@@ -286,8 +288,8 @@
       text-shadow: 0 0 12px rgba(255,43,214,0.22);
     }
     button.key.equals .core{
-      width: calc(var(--btn-visual-size) + 6px);
-      height: calc(var(--btn-visual-size) + 6px);
+      width: calc(var(--btn-visual-size) + 10px);
+      height: calc(var(--btn-visual-size) + 10px);
       border-color: rgba(122,44,255,0.40);
       box-shadow:
         0 0 0 1px rgba(122,44,255,0.16) inset,
